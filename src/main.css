@@ -1,0 +1,87 @@
+.navbar {
+  background-color: #181846;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 112px;
+  border-radius: 0px 0px 22px 22px;
+  display: flex;
+}
+.navbar h2 {
+  color: white;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-left: 45px;
+}
+.logo {
+  width: 70px;
+  height: 70px;
+}
+.picker {
+  position: fixed;
+  top: 130px;
+  width: 100%;
+}
+.navItem {
+  margin: auto;
+}
+
+.p-menuitem-text {
+  color: red !important;
+}
+
+.p-menuitem-icon {
+  width: 20px;
+  height: 20px;
+  color: red !important;
+}
+h1 {
+  color: #256eb8;
+  text-shadow: 4px 4px #181846;
+}
+.navItem {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  background-color: #48118c;
+  align-content: center;
+  border-radius: 40%;
+  align-items: center;
+}
+h3 {
+  margin-right: 10px;
+}
+.navItem:hover {
+  background-color: #521b96;
+}
+.returnBtn {
+  margin-top: 30px !important;
+}
+.pickItems {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
+}
+.label {
+  margin-right: 35px;
+  font-size: 15px;
+}
+.whole {
+  margin-top: 120px;
+}
+.flex-auto label {
+  font-size: 20px;
+  font-weight: bold;
+}
+.inputNumber {
+  text-align: center !important;
+  width: 60px !important;
+  height: 60px;
+  font-weight: bold !important;
+}
+p-inputnumber {
+  align-content: center !important;
+}
