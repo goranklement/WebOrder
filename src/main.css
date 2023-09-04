@@ -85,3 +85,46 @@ h3 {
 p-inputnumber {
   align-content: center !important;
 }
+.saveBtn {
+  margin-left: 30px !important;
+}
+.menuImages {
+  width: 80px;
+  height: 80px;
+}
+.menuPicker {
+  width: 150px;
+  height: 150px;
+  background-color: #48118c;
+  border-radius: 40px;
+}
+
+.menuPicker:hover {
+  background-color: #521b96;
+  transform: scale(1.1);
+}
+h5 {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+.item {
+  display: flex;
+  background-color: #e9ebcc;
+  border-radius: 40px;
+  color: #256eb8;
+  justify-content: space-around;
+  width: 170px;
+}
+.item:hover {
+  background-color: #d6d9a9;
+  transform: scale(1.1);
+}
+.p-inputnumber {
+  margin-top: 10px !important;
+}
+.price {
+  background-color: #181846;
+}
+.p-inputnumber-input {
+  font-weight: bold !important;
+}

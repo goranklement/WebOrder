@@ -1,33 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import NavigationItem from "./NavigationItem";
+import MenuCategory from "./MenuCategory";
 import { database } from "./FirebaseConfig";
 import { ref, set } from "firebase/database";
 import { InputNumber } from "primereact/inputnumber";
+import { Fieldset } from "primereact/fieldset";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import { useRef } from "react";
 import "../main.css";
 
-export default function FloatLabelDemo() {
+import { Toast } from "primereact/toast";
+
+export default function Picker() {
   const [selectedRestaurant, setSelectedRestaurant] = useState("");
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
-  const [tableNumber, setTableNumber] = useState(0);
+  const [childStates, setChildStates] = useState(["", "", "", ""]);
+  const [tableNumber, setTableNumber] = useState("");
+  const toast = useRef(null);
 
-  const restaurants = [
-    { name: "Karaka", code: "NY" },
-    { name: "Oliva", code: "RM" },
-    // ...other restaurant options
-  ];
+  const showSuccess = (message) => {
+    toast.current.show({
+      severity: "success",
+      summary: "Success",
+      detail: message,
+      life: 7000,
+    });
+  };
+
+  useEffect(() => {
+    if (childStates.some((state) => state !== "")) {
+      const childStatesWithCommas = childStates
+        .filter((state) => state !== "")
+        .join(", ");
+      showSuccess(childStatesWithCommas);
+    }
+  }, [childStates]);
+
+  const showWarn = (message) => {
+    toast.current.show({
+      severity: "warn",
+      summary: "Warning",
+      detail: message,
+      life: 3000,
+    });
+  };
+
+  const restaurants = [{ name: "Karaka" }];
 
   const menuData = {
-    Karaka: ["Pizza", "Cold", "BBQ"],
+    Karaka: ["Pizza", "Cold", "BBQ", "Pasta"],
     Oliva: ["Pizza", "Hot", "Cold", "Pasta"],
-    // ...other menu data
+    Exclusive: ["Hot", "Cold"],
+    SportHouse: ["Pizza", "Cold", "Pasta"],
+    Hedonist: ["Hot", "Cold"],
   };
 
   const handleReturn = () => {
-    setSelectedRestaurant(null);
+    setSelectedRestaurant("");
+  };
+
+  const updateChildState = (index, newState) => {
+    const updatedChildStates = [...childStates];
+    updatedChildStates[index] = newState;
+    setChildStates(updatedChildStates);
   };
 
   const handleCheckboxChange = (category) => {
@@ -38,22 +75,22 @@ export default function FloatLabelDemo() {
   };
 
   const handleSaveCheckboxes = async () => {
-    console.log(selectedCheckboxes);
-    const meal = selectedCheckboxes;
-
-    set(ref(database, "Orders/" + selectedRestaurant.name), {
-      number: tableNumber,
-      order: Object.keys(selectedCheckboxes)
-        .filter((k) => selectedCheckboxes[k])
-        .toString(),
-      time: Date.now(),
-      isTaken: "0",
-    });
+    const filteredChildStates = childStates.filter((state) => state !== "");
+    if (selectedCheckboxes !== {}) {
+      set(
+        ref(database, "Orders/" + selectedRestaurant.name + "/" + tableNumber),
+        {
+          number: tableNumber,
+          order: filteredChildStates.toString(),
+          time: Date.now(),
+          isTaken: "0",
+        }
+      );
+      showSuccess("Your order is sent!");
+    } else {
+      showWarn("Your order is empty!");
+    }
   };
-
-  useEffect(() => {
-    console.log(selectedCheckboxes); // Log the selectedCheckboxes in useEffect
-  }, [selectedCheckboxes]);
 
   const renderTabs = () => {
     const categories = menuData[selectedRestaurant?.name] || [];
@@ -62,19 +99,20 @@ export default function FloatLabelDemo() {
       return <p>No menu categories available.</p>;
     } else {
       return categories.map((category, index) => (
-        <NavigationItem
+        <MenuCategory
           key={index}
+          index={index}
           category={category}
-          handleCheckboxChange={handleCheckboxChange}
           name={selectedRestaurant?.name}
-          selectedCheckboxes={selectedCheckboxes} // Pass the prop here
+          onUpdateState={updateChildState}
         />
       ));
     }
   };
   return (
     <div className="whole">
-      {selectedRestaurant === null ? (
+      <Toast ref={toast} />
+      {selectedRestaurant === "" ? (
         <span className="p-float-label">
           <Dropdown
             inputId="dd-restaurant"
@@ -104,7 +142,7 @@ export default function FloatLabelDemo() {
           />
           <Button
             className="saveBtn"
-            label="Save Checkboxes"
+            label="Send order!"
             onClick={handleSaveCheckboxes}
           />
           <div className="card flex flex-wrap gap-3 p-fluid">
@@ -121,7 +159,7 @@ export default function FloatLabelDemo() {
                 className="inputNumber"
                 inputId="integeronly"
                 value={tableNumber}
-                min="0"
+                min="1"
                 max="99"
                 onValueChange={(e) => setTableNumber(e.value)}
               />
