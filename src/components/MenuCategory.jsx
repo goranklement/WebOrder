@@ -9,16 +9,33 @@ import { Toast } from "primereact/toast";
 const MenuCategory = (props) => {
   const [menuData, setMenuData] = useState(null);
   const [menuPrice, setMenuPrice] = useState(null);
+  const [pickedPrice, setPickedPrice] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const toast = useRef(null);
 
   const [selectedItems, setSelectedItems] = useState({});
 
-  const handleItemSelected = (item, value) => {
+  const handleItemSelected = (item, value, totalPrice) => {
     setSelectedItems((prevSelectedItems) => ({
       ...prevSelectedItems,
       [item]: value,
     }));
+    setPickedPrice((prevPrices) => ({
+      ...prevPrices,
+      [item]: totalPrice,
+    }));
+    console.log(pickedPrice);
+  };
+
+  const getAmount = () => {
+    let sum = 0;
+
+    for (const key in pickedPrice) {
+      if (pickedPrice.hasOwnProperty(key)) {
+        sum += pickedPrice[key];
+      }
+    }
+    return sum;
   };
 
   useEffect(() => {
@@ -34,6 +51,7 @@ const MenuCategory = (props) => {
   };
   const updateState = () => {
     props.onUpdateState(props.index, getSelectedItemsString());
+    props.onUpdatePrice(props.index, getAmount());
   };
 
   const handleItemDeselected = (item) => {
@@ -79,7 +97,6 @@ const MenuCategory = (props) => {
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
-    console.log(selectedItems);
   };
 
   const showItems = () => {

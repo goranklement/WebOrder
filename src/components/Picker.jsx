@@ -17,7 +17,9 @@ export default function Picker() {
   const [selectedRestaurant, setSelectedRestaurant] = useState("");
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
   const [childStates, setChildStates] = useState(["", "", "", ""]);
+  const [childPriceStates, setChildPriceStates] = useState(["", "", "", ""]);
   const [tableNumber, setTableNumber] = useState("");
+  const [wholeAmount, setWholeAmount] = useState(0);
   const toast = useRef(null);
 
   const showSuccess = (message) => {
@@ -30,11 +32,16 @@ export default function Picker() {
   };
 
   useEffect(() => {
+    const sum = childPriceStates.reduce((accumulator, currentValue) => {
+      const num = parseFloat(currentValue);
+      return !isNaN(num) ? accumulator + num : accumulator;
+    }, 0);
+    setWholeAmount(sum.toFixed(2));
     if (childStates.some((state) => state !== "")) {
       const childStatesWithCommas = childStates
         .filter((state) => state !== "")
         .join(", ");
-      showSuccess(childStatesWithCommas);
+      showSuccess(childStatesWithCommas + " TOTAL: " + sum.toFixed(2));
     }
   }, [childStates]);
 
@@ -62,9 +69,14 @@ export default function Picker() {
   };
 
   const updateChildState = (index, newState) => {
-    const updatedChildStates = [...childStates];
-    updatedChildStates[index] = newState;
-    setChildStates(updatedChildStates);
+    const updatedChildPrices = [...childStates];
+    updatedChildPrices[index] = newState;
+    setChildStates(updatedChildPrices);
+  };
+  const updateChildPrice = (index, sum) => {
+    const updatedChildPrices = [...childPriceStates];
+    updatedChildPrices[index] = sum;
+    setChildPriceStates(updatedChildPrices);
   };
 
   const handleCheckboxChange = (category) => {
@@ -105,6 +117,7 @@ export default function Picker() {
           category={category}
           name={selectedRestaurant?.name}
           onUpdateState={updateChildState}
+          onUpdatePrice={updateChildPrice}
         />
       ));
     }

@@ -7,7 +7,11 @@ const ListItem = (props) => {
   const handleValueChange = (newValue) => {
     setValue(newValue);
     if (newValue > 0) {
-      props.onItemSelected(props.item, newValue);
+      props.onItemSelected(
+        props.item,
+        newValue,
+        newValue * parseFloat(props.price)
+      );
     } else {
       props.onItemDeselected(props.item);
     }
