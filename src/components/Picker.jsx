@@ -15,7 +15,7 @@ import { Toast } from "primereact/toast";
 
 export default function Picker() {
   const [selectedRestaurant, setSelectedRestaurant] = useState("");
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
+  const [selectedItems, setSelectedItems] = useState({});
   const [childStates, setChildStates] = useState(["", "", "", ""]);
   const [childPriceStates, setChildPriceStates] = useState(["", "", "", ""]);
   const [tableNumber, setTableNumber] = useState("");
@@ -41,7 +41,7 @@ export default function Picker() {
       const childStatesWithCommas = childStates
         .filter((state) => state !== "")
         .join(", ");
-      showSuccess(childStatesWithCommas + " TOTAL: " + sum.toFixed(2));
+      showSuccess(childStatesWithCommas + " TOTAL: " + sum.toFixed(2) + " EUR");
     }
   }, [childStates]);
 
@@ -54,7 +54,13 @@ export default function Picker() {
     });
   };
 
-  const restaurants = [{ name: "Karaka" }];
+  const restaurants = [
+    { name: "Karaka" },
+    { name: "Oliva" },
+    { name: "SportHouse" },
+    { name: "Exclusive" },
+    { name: "Hedonist" },
+  ];
 
   const menuData = {
     Karaka: ["Pizza", "Cold", "BBQ", "Pasta"],
@@ -80,15 +86,15 @@ export default function Picker() {
   };
 
   const handleCheckboxChange = (category) => {
-    setSelectedCheckboxes((prevSelected) => ({
+    setSelectedItems((prevSelected) => ({
       ...prevSelected,
       [category]: !prevSelected[category],
     }));
   };
 
-  const handleSaveCheckboxes = async () => {
+  const handleSaveOrder = async () => {
     const filteredChildStates = childStates.filter((state) => state !== "");
-    if (selectedCheckboxes !== {}) {
+    if (selectedItems != {}) {
       set(
         ref(database, "Orders/" + selectedRestaurant.name + "/" + tableNumber),
         {
@@ -104,12 +110,13 @@ export default function Picker() {
     }
   };
 
-  const renderTabs = () => {
+  const renderCategories = () => {
     const categories = menuData[selectedRestaurant?.name] || [];
 
     if (categories.length === 0) {
       return <p>No menu categories available.</p>;
     } else {
+      console.log(menuData["Karaka"]);
       return categories.map((category, index) => (
         <MenuCategory
           key={index}
@@ -144,7 +151,7 @@ export default function Picker() {
       ) : (
         <>
           <h1>{selectedRestaurant?.name} menu</h1>
-          <div className="pickItems">{renderTabs(selectedCheckboxes)}</div>
+          <div className="pickItems">{renderCategories(selectedItems)}</div>
 
           <Button
             className="returnBtn"
@@ -156,7 +163,7 @@ export default function Picker() {
           <Button
             className="saveBtn"
             label="Send order!"
-            onClick={handleSaveCheckboxes}
+            onClick={handleSaveOrder}
           />
           <div className="card flex flex-wrap gap-3 p-fluid">
             <div className="flex-auto">
